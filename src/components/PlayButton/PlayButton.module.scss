@@ -1,0 +1,62 @@
+@import "../../scss/variables";
+
+$button-size: 8rem;
+$icon-size: $button-size/3;
+$playcolor: $dark-military-green;
+
+.playPauseButton {
+  $self: &;
+
+  position: relative;
+  // bottom: -$button-size/2;
+  left: 0;
+  right: 0;
+  // margin: 0 1rem;
+  background-color: darken($peach, 30%);
+  border: none;
+  outline: none;
+  height: $button-size;
+  width: $button-size;
+  font-size: 2rem;
+  cursor: not-allowed;
+  -moz-border-radius: $button-size;
+  -webkit-border-radius: $button-size;
+  border-radius: $button-size;
+  box-shadow: 0px 4px 35px -10px black;
+  transition: transform linear 100ms;
+
+  &:focus {
+    outline: none;
+  }
+
+  &:active {
+    transform: scale3d(1.25, 1.5 ,1) translateY(1rem);
+  }
+
+  &:before {
+    content: "";
+    position: absolute;
+    top: $icon-size;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    width: $icon-size;
+    height: $icon-size;
+    border-style: solid;
+    border-width: $icon-size/2 0 $icon-size/2 $icon-size;
+    border-color: transparent transparent transparent $playcolor;
+    transition: 250ms ease-in-out;
+  }
+
+  &--active {
+    &:before {
+      border-width: 0 $icon-size/3 0 $icon-size/3;
+      border-color: transparent $playcolor transparent $playcolor;
+    }
+  }
+
+  &--enabled{
+    cursor: pointer;
+    background-color: $peach;
+  }
+}

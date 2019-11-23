@@ -1,0 +1,95 @@
+@import "../../scss/variables";
+
+.container {
+  background-color: $light-white;
+  width: 50%;
+  padding: 7rem 0 4rem 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;;
+}
+
+.inputContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.input {
+  padding: 0.75rem;
+  border: none;
+  outline: none;
+  box-shadow: 0 0 20px -8px black;
+  height: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.input {
+  width: 25rem;
+  cursor: grab;
+}
+
+.inputHolder {
+  position: relative;
+  transition: all 150ms ease-in-out;
+
+  &--dragging {
+    transform: scale(1.2);
+    cursor: grabbing;
+  }
+
+  &:before,
+  &:after {
+    content: "";
+    position: absolute;
+    right: 0.75rem;
+    z-index: 100;
+  }
+
+  &:before {
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-bottom: 5px solid $blue-green;
+    top: calc(20px - 6px);
+  }
+
+  &:after {
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 5px solid $blue-green;
+    top: calc(20px + 1px);
+  }
+
+  &--active {
+    .input {
+      background-color: $dark-military-green;
+      color: $light-white;
+    }
+
+    &:before {
+      border-bottom-color: $light-white;
+    }
+
+    &:after {
+      border-top-color: $light-white;
+    }
+  }
+}
+
+.shuffleButton {
+  margin-bottom: 1rem;
+  border: none;
+  background-color: $blue-green;
+  color: $light-white;
+  cursor: pointer;
+  height: 2.5rem;
+  padding: 0 1rem;
+}
+
+.delete{
+  position: absolute;
+  top: 0.5rem;
+  font-size: 1.5rem;
+  right: -1.5rem;
+  cursor: pointer;
+}

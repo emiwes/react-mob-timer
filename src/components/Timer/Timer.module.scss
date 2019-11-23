@@ -1,0 +1,52 @@
+@import "../../scss/variables";
+
+.container {
+  color: $peach;
+}
+
+.timer{
+  font-size: 5rem;
+  padding: 1.5rem 1rem;
+  margin: 0 1rem 0.5rem 1rem;
+  position: relative;
+  border-radius: 20px;
+  width: 9rem;
+  height: 11rem;
+  font-weight: bold;
+}
+
+.top, .bottom {
+  position: absolute;
+  z-index: 10;
+  left: 0;
+  height: 50%;
+  width: 100%;
+}
+
+.top{
+  top: 0;
+  background-color: $light-military-green;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+
+}
+
+.bottom{
+  bottom: 0;
+  background-color: $military-green;
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+}
+
+.content{
+  z-index: 15;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items:center;
+}

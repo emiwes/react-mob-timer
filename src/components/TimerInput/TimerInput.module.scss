@@ -1,0 +1,29 @@
+@import "../../scss/variables";
+
+.input {
+  width: 200px;
+  padding: 0;
+  margin-bottom: 3rem;
+  background-color: transparent;
+  color: $peach;
+  border: none;
+  border-bottom: 1px solid $peach;
+  font-size: 3rem;
+  outline: none;
+  text-align: center;
+
+  &::placeholder {
+    color: $peach;
+  }
+
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    /* display: none; <- Crashes Chrome on hover */
+    -webkit-appearance: none;
+    margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
+  }
+
+  &[type="number"] {
+    -moz-appearance: textfield; /* Firefox */
+  }
+}
