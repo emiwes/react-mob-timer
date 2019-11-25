@@ -19,19 +19,24 @@ const TimerContainer = ({
   const [isActive, setIsActive] = useState(false);
 
   useEffect(() => {
+    
     let interval = null;
-    if (isActive && currentTime > 0) {
+    
+    if (isActive && currentTime >= 0) {
+      writeToTitle(currentTime);
+
       interval = setInterval(() => {
-        handleSetCurrentTime(time => time - 1);
+        handleSetCurrentTime(currentTime - 1);
       }, 1000);
-    } else if (isActive && currentTime <= 0) {
+    } else if (isActive && currentTime < 0) {
       clearInterval(interval);
       resetTimer();
-
       handleNextActiveParticipant();
     }
+
     return () => clearInterval(interval);
-  }, [isActive, currentTime]);
+
+  }, [isActive, currentTime, handleSetCurrentTime, handleNextActiveParticipant]);
 
   function toggleTimer() {
     setIsActive(!isActive);
@@ -40,6 +45,12 @@ const TimerContainer = ({
   function resetTimer() {
     handleSetCurrentTime(startTime);
     setIsActive(false);
+  }
+
+  function writeToTitle(timeInSeconds){
+    const totalMinutes = Math.floor(timeInSeconds / 60);
+    const leftOverSeconds = timeInSeconds % 60;
+    document.title = `${totalMinutes}min ${leftOverSeconds}s`;
   }
 
   return (
