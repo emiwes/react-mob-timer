@@ -1,6 +1,6 @@
 {
   "files": {
-    "main.css": "/react-mob-timer/static/css/main.905ba1f6.chunk.css",
+    "main.css": "/react-mob-timer/static/css/main.e6262933.chunk.css",
     "main.js": "/react-mob-timer/static/js/main.f8cb6122.chunk.js",
     "main.js.map": "/react-mob-timer/static/js/main.f8cb6122.chunk.js.map",
     "runtime-main.js": "/react-mob-timer/static/js/runtime-main.a959c5bd.js",
@@ -8,16 +8,16 @@
     "static/js/2.2b3cf481.chunk.js": "/react-mob-timer/static/js/2.2b3cf481.chunk.js",
     "static/js/2.2b3cf481.chunk.js.map": "/react-mob-timer/static/js/2.2b3cf481.chunk.js.map",
     "index.html": "/react-mob-timer/index.html",
-    "precache-manifest.f64a0f7af175e498f678a2cf9a2764b0.js": "/react-mob-timer/precache-manifest.f64a0f7af175e498f678a2cf9a2764b0.js",
+    "precache-manifest.b942c94146118a093d06ae27e6da2162.js": "/react-mob-timer/precache-manifest.b942c94146118a093d06ae27e6da2162.js",
     "service-worker.js": "/react-mob-timer/service-worker.js",
-    "static/css/main.905ba1f6.chunk.css.map": "/react-mob-timer/static/css/main.905ba1f6.chunk.css.map",
+    "static/css/main.e6262933.chunk.css.map": "/react-mob-timer/static/css/main.e6262933.chunk.css.map",
     "static/media/fight.mp3": "/react-mob-timer/static/media/fight.4e9f7ab1.mp3",
     "static/media/timeover.mp3": "/react-mob-timer/static/media/timeover.c39f339c.mp3"
   },
   "entrypoints": [
     "static/js/runtime-main.a959c5bd.js",
     "static/js/2.2b3cf481.chunk.js",
-    "static/css/main.905ba1f6.chunk.css",
+    "static/css/main.e6262933.chunk.css",
     "static/js/main.f8cb6122.chunk.js"
   ]
 }
