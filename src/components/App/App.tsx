@@ -2,14 +2,15 @@ import React, { useState } from "react";
 import "../../scss/global.scss";
 import TimerContainer from "../TimerContainer/TimerContainer";
 import ParticipantContainer from "../ParticipantContainer/ParticipantContainer";
+import { IParticipant } from "../../models/models";
 
 const App = () => {
-  const initialTime = 3; // 15 minutes
+  const initialTime: number = 3; // 15 minutes
 
-  const [participants, setParticipants] = useState([]);
+  const [participants, setParticipants] = useState<IParticipant[]>([]);
   const [activeParticipant, setActiveParticipant] = useState();
-  const [startTime, setStarTime] = useState(initialTime);
-  const [currentTime, setCurrentTime] = useState(initialTime);
+  const [startTime, setStarTime] = useState<number>(initialTime);
+  const [currentTime, setCurrentTime] = useState<number>(initialTime);
 
   const updateNextActiveParticipant = () => {
     const currentActiveIndex = participants.findIndex(
@@ -24,11 +25,11 @@ const App = () => {
     setActiveParticipant(newActiveParticipant);
   };
 
-  const updateParticipants = newParticipants => {
+  const updateParticipants = (newParticipants: IParticipant[]) => {
     setParticipants([...newParticipants]);
   };
 
-  const updateSpecificActiveParticipant = newActive => {
+  const updateSpecificActiveParticipant = (newActive?: IParticipant) => {
     setActiveParticipant(newActive);
   };
 

@@ -3,10 +3,23 @@ import styles from "./TimerContainer.module.scss";
 
 import Timer from "../Timer/Timer";
 import PlayButton from "../PlayButton/PlayButton";
-import timeoverSound from "../../assets/audio/timeover.mp3";
-import fightSound from "../../assets/audio/fight.mp3";
+// import timeoverSound from "../../assets/audio/timeover.mp3";
+// import fightSound from "../../assets/audio/fight.mp3";
 
-const TimerContainer = ({
+const timeoverSound = require("../../assets/audio/timeover.mp3");
+const fightSound = require( "../../assets/audio/fight.mp3");
+
+
+
+interface ITimerContainer{
+  activeParticipant: any,
+  startTime: number,
+  currentTime: number,
+  handleNextActiveParticipant: () => void,
+  handleSetCurrentTime: (time: number) => void
+}
+
+const TimerContainer: React.FC<ITimerContainer> = ({
   activeParticipant,
   startTime,
   currentTime,
@@ -21,22 +34,22 @@ const TimerContainer = ({
   const [isActive, setIsActive] = useState(false);
 
   useEffect(() => {
-    let interval = null;
+    let interval: any;
 
     if (isActive && currentTime >= 0) {
       writeToTitle(currentTime);
 
-      interval = setInterval(() => {
+      interval = window.setInterval(() => {
         handleSetCurrentTime(currentTime - 1);
       }, 1000);
     } else if (isActive && currentTime < 0) {
       playStopSound();
-      clearInterval(interval);
+      window.clearInterval(interval);
       resetTimer();
       handleNextActiveParticipant();
     }
 
-    return () => clearInterval(interval);
+    return () => window.clearInterval(interval);
   }, [
     isActive,
     currentTime,
@@ -44,7 +57,7 @@ const TimerContainer = ({
     handleNextActiveParticipant
   ]);
 
-  function toggleTimer() {
+  function toggleTimer(): void {
     if (!isActive && currentTime === startTime) {
       var audio = new Audio(fightSound);
       audio.play();
@@ -52,12 +65,12 @@ const TimerContainer = ({
     setIsActive(!isActive);
   }
 
-  function resetTimer() {
+  function resetTimer(): void {
     handleSetCurrentTime(startTime);
     setIsActive(false);
   }
 
-  function writeToTitle(timeInSeconds) {
+  function writeToTitle(timeInSeconds: number): void {
     const totalMinutes = Math.floor(timeInSeconds / 60);
     const leftOverSeconds = timeInSeconds % 60;
     document.title = `${totalMinutes}min ${leftOverSeconds}s`;

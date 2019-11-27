@@ -1,7 +1,13 @@
 import React from "react";
 import styles from "./ParticipantForm.module.scss";
 
-const ParticipantForm = ({ addInputValue, handleAddParticipant, handleSetaddInputValue }) => {
+interface IParticipantForm{
+  addInputValue: string,
+  handleAddParticipant: (event: React.FormEvent<HTMLFormElement>) => void,
+  handleSetaddInputValue: (inputValue: string) => void,
+}
+
+const ParticipantForm: React.FC<IParticipantForm> = ({ addInputValue, handleAddParticipant, handleSetaddInputValue }) => {
   return (
     <form
       className={styles.addInputContainer}

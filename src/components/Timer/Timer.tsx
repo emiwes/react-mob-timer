@@ -1,19 +1,24 @@
 import React from "react";
 import styles from "./Timer.module.scss";
 
-const Timer = ({time, label}) => {
+interface ITimerProps {
+  time: number,
+  label: string
+}
+
+const Timer: React.FC<ITimerProps> = ({time, label}) => {
   
-  function renderMinutes() {
+  function renderMinutes(): string {
     let minutes = Math.floor(time / 60);
-    return minutes < 10 ? `0${minutes}` : minutes;
+    return minutes < 10 ? `0${minutes}` : `${minutes}`;
   }
 
-  function renderSeconds() {
+  function renderSeconds(): string {
     let seconds = time % 60;
-    return seconds < 10 ? `0${seconds}` : seconds;
+    return seconds < 10 ? `0${seconds}` : `${seconds}`;
   }
 
-  const renderTime = () => {
+  const renderTime = (): string => {
     let timeText;
     switch (label) {
       case 'MINUTES':
@@ -24,6 +29,7 @@ const Timer = ({time, label}) => {
         timeText = renderSeconds();
         break;
       default:
+        timeText = '';
         break;
     }
 

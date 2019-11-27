@@ -2,8 +2,20 @@ import React, { useState } from "react";
 import styles from "./ParticipantContainer.module.scss";
 import TimerInput from "../TimerInput/TimerInput";
 import ParticipantForm from "../ParticipantForm/ParticipantForm";
+import { IParticipant } from "../../models/models";
 
-const ParticipantContainer = ({
+interface IParticipantContainer{
+  activeParticipant: IParticipant,
+  participants: IParticipant[],
+  startTime: number,
+  handleUpdateParticipants: (participants: IParticipant[]) => void,
+  handleNextActiveParticipant: () => void,
+  handleSpecificActiveParticipant: (participant?: IParticipant) => void,
+  handleSetStartTime: (time: number) => void,
+  handleSetCurrentTime: (time: number) => void
+}
+
+const ParticipantContainer: React.FC<IParticipantContainer> = ({
   activeParticipant,
   participants,
   startTime,
@@ -13,38 +25,37 @@ const ParticipantContainer = ({
   handleSetStartTime,
   handleSetCurrentTime
 }) => {
-  const [draggedParticipant, setDraggedParticipant] = useState();
+  const [draggedParticipant, setDraggedParticipant] = useState<IParticipant>();
   const [addInputValue, setaddInputValue] = useState("");
 
-  const handleDragStart = (event, index) => {
+  const handleDragStart = (event: React.DragEvent<HTMLDivElement>, index: number) => {
     const draggedItem = participants[index];
     draggedItem.isDragging = true;
     setDraggedParticipant(draggedItem);
-
-    // event.dataTransfer.effectAllowed = "move";
-    // event.dataTransfer.setData("text/html", event.target.parentNode); // firefox fix
-    // event.dataTransfer.setDragImage(event.target.parentNode, 20, 20); // chrome fix
   };
 
-  const handleDragOver = (event, index) => {
+  const handleDragOver = (event: React.DragEvent<HTMLDivElement>, index: number) => {
+    if (!draggedParticipant) return;
+    
     const draggedItem = participants[index];
     if (draggedItem === draggedParticipant) return;
 
-    let other = participants.filter(p => p !== draggedParticipant);
+    let other: IParticipant[] = participants.filter(p => p !== draggedParticipant);
     other.splice(index, 0, draggedParticipant);
     handleUpdateParticipants(other);
   };
 
-  const handleDragEnd = (event, index) => {
+  const handleDragEnd = () => {
+    if (!draggedParticipant) return;    
     draggedParticipant.isDragging = false;
-    setDraggedParticipant();
+    setDraggedParticipant(undefined);
   };
 
-  const addParticipant = event => {
+  const addParticipant = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!addInputValue) return;
 
-    const newParticipant = {
+    const newParticipant: IParticipant = {
       name: addInputValue,
       isDragging: false,
       uuid: Date.now()
@@ -68,7 +79,7 @@ const ParticipantContainer = ({
     handleSpecificActiveParticipant(participants[0]);
   };
 
-  const deleteParticipant = uuid => {
+  const deleteParticipant = (uuid: number) => {
     if (participants.length === 1) handleSpecificActiveParticipant();
     else if (activeParticipant.uuid === uuid) handleNextActiveParticipant();
 
@@ -76,7 +87,7 @@ const ParticipantContainer = ({
     handleUpdateParticipants(newParticipants);
   };
 
-  const renderParticipants = participants.map((participant, index) => {
+  const renderParticipants = participants.map((participant: any, index: number) => {
     const classes = [
       styles.inputHolder,
       participant.isDragging ? styles["inputHolder--dragging"] : "",

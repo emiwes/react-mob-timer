@@ -1,7 +1,14 @@
 import React from "react";
 import styles from "./PlayButton.module.scss";
+import { IParticipant } from "../../models/models";
 
-const PlayButton = ({activeParticipant, onClick, isActive}) => {
+interface IPlayButtonProps {
+  activeParticipant?: IParticipant,
+  onClick: React.MouseEventHandler<HTMLButtonElement>,
+  isActive: boolean
+}
+
+const PlayButton: React.FC<IPlayButtonProps> = ({activeParticipant, onClick, isActive}) => {
 
   const buttonClasses = [
     styles.playPauseButton,
