@@ -3,8 +3,23 @@ import "../../scss/global.scss";
 import TimerContainer from "../TimerContainer/TimerContainer";
 import ParticipantContainer from "../ParticipantContainer/ParticipantContainer";
 import { IParticipant } from "../../models/models";
+import { Provider } from "react-redux";
+import configureStore from "../../store/configureStore";
 
-const App = () => {
+// const App = () => {
+  
+
+//   return (
+//     <React.Fragment>
+      
+//     </React.Fragment>
+//   );
+// };
+
+const store = configureStore();
+
+const App: React.FC = () => {
+
   const initialTime: number = 3; // 15 minutes
 
   const [participants, setParticipants] = useState<IParticipant[]>([]);
@@ -34,7 +49,8 @@ const App = () => {
   };
 
   return (
-    <React.Fragment>
+    <Provider store={store}>
+      <>
       <section style={{ display: "flex", height: "100%" }}>
         <TimerContainer
           activeParticipant={activeParticipant}
@@ -54,7 +70,9 @@ const App = () => {
           handleSetCurrentTime={setCurrentTime}
         />
       </section>
-    </React.Fragment>
-  );
+      </>
+    </Provider>
+  )
 };
+
 export default App;
