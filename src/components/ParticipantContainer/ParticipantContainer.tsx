@@ -1,105 +1,77 @@
-import React, { useState } from "react";
+import React from "react";
 import styles from "./ParticipantContainer.module.scss";
 import TimerInput from "../TimerInput/TimerInput";
 import ParticipantForm from "../ParticipantForm/ParticipantForm";
 import { IParticipant } from "../../models/models";
+import useParticipant from "../../hooks/useParticipant";
 
 interface IParticipantContainer{
-  activeParticipant: IParticipant,
-  participants: IParticipant[],
   startTime: number,
-  handleUpdateParticipants: (participants: IParticipant[]) => void,
-  handleNextActiveParticipant: () => void,
-  handleSpecificActiveParticipant: (participant?: IParticipant) => void,
   handleSetStartTime: (time: number) => void,
   handleSetCurrentTime: (time: number) => void
 }
 
 const ParticipantContainer: React.FC<IParticipantContainer> = ({
-  activeParticipant,
-  participants,
   startTime,
-  handleUpdateParticipants,
-  handleNextActiveParticipant,
-  handleSpecificActiveParticipant,
   handleSetStartTime,
   handleSetCurrentTime
 }) => {
-  const [draggedParticipant, setDraggedParticipant] = useState<IParticipant>();
-  const [addInputValue, setaddInputValue] = useState("");
 
-  const handleDragStart = (event: React.DragEvent<HTMLDivElement>, index: number) => {
-    const draggedItem = participants[index];
+  const { participants, removeParticipantAction, resetParticipantAction, updateParticipantAction } = useParticipant();
+
+  const handleDragStart = (draggedParticipant: IParticipant) => {
+    const draggedItem = {...draggedParticipant};    
     draggedItem.isDragging = true;
-    setDraggedParticipant(draggedItem);
+    updateParticipantAction(draggedItem);
   };
 
-  const handleDragOver = (event: React.DragEvent<HTMLDivElement>, index: number) => {
-    if (!draggedParticipant) return;
-    
-    const draggedItem = participants[index];
-    if (draggedItem === draggedParticipant) return;
-
-    let other: IParticipant[] = participants.filter(p => p !== draggedParticipant);
-    other.splice(index, 0, draggedParticipant);
-    handleUpdateParticipants(other);
+  const handleDragOver = (index: number) => {
+    const draggedItem = participants.find(p => p.isDragging);
+    if (!draggedItem || participants[index] === draggedItem) return;
+    let other: IParticipant[] = participants.filter(p => p !== draggedItem);
+    other.splice(index, 0, draggedItem);
+    resetParticipantAction(other);
   };
 
-  const handleDragEnd = () => {
-    if (!draggedParticipant) return;    
-    draggedParticipant.isDragging = false;
-    setDraggedParticipant(undefined);
-  };
-
-  const addParticipant = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    if (!addInputValue) return;
-
-    const newParticipant: IParticipant = {
-      name: addInputValue,
-      isDragging: false,
-      uuid: Date.now()
-    };
-
-    participants.push(newParticipant);
-    setaddInputValue("");
-    handleUpdateParticipants(participants);
-
-    if (!activeParticipant) {
-      handleSpecificActiveParticipant(newParticipant);
-    }
+  const handleDragEnd = (draggedParticipant: IParticipant) => {
+    const draggedItem = {...draggedParticipant}
+    draggedItem.isDragging = false;
+    updateParticipantAction(draggedItem);
   };
 
   const shuffleParticipants = () => {
-    for (let i = participants.length - 1; i > 0; i--) {
+    let shuffled = [...participants]
+    for (let i = shuffled.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
-      [participants[i], participants[j]] = [participants[j], participants[i]];
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
     }
-    handleUpdateParticipants(participants);
-    handleSpecificActiveParticipant(participants[0]);
+    resetParticipantAction(shuffled);
   };
 
-  const deleteParticipant = (uuid: number) => {
-    if (participants.length === 1) handleSpecificActiveParticipant();
-    else if (activeParticipant.uuid === uuid) handleNextActiveParticipant();
-
-    const newParticipants = participants.filter(p => p.uuid !== uuid);
-    handleUpdateParticipants(newParticipants);
+  const deleteParticipant = (participant: IParticipant, index: number) => {
+    const participantToRemove = {...participant};
+    if (participantToRemove.isActive) {
+      const currentActiveIndex = participants.findIndex(p => p.isActive);
+      const next = currentActiveIndex === participants.length - 1 ? { ...participants[0] } : { ...participants[currentActiveIndex + 1] }
+      next.isActive = true;
+      updateParticipantAction(next);
+    } 
+    removeParticipantAction(participant.uuid);
   };
 
-  const renderParticipants = participants.map((participant: any, index: number) => {
+  const renderParticipants = participants.map((participant: IParticipant, index: number) => {
     const classes = [
       styles.inputHolder,
       participant.isDragging ? styles["inputHolder--dragging"] : "",
-      participant === activeParticipant ? styles["inputHolder--active"] : ""
+      participant.isActive ? styles["inputHolder--active"] : ""
     ].join(" ");
 
     return (
       <div
         draggable
-        onDragStart={e => handleDragStart(e, index)}
-        onDragEnd={handleDragEnd}
-        onDragOver={e => handleDragOver(e, index)}
+        onDragStart={() => handleDragStart(participant)}
+        onDragEnd={() => handleDragEnd(participant)}
+        onDragOver={() => handleDragOver(index)}
         key={participant.uuid}
         className={classes}
       >
@@ -107,7 +79,7 @@ const ParticipantContainer: React.FC<IParticipantContainer> = ({
         <div className={styles.input}>{participant.name}</div>
         <span
           className={styles.delete}
-          onClick={() => deleteParticipant(participant.uuid)}
+          onClick={() => deleteParticipant(participant, index)}
         >
           &#10006;
         </span>
@@ -123,11 +95,7 @@ const ParticipantContainer: React.FC<IParticipantContainer> = ({
         handleSetCurrentTime={handleSetCurrentTime}
       ></TimerInput>
 
-      <ParticipantForm
-        addInputValue={addInputValue}
-        handleSetaddInputValue={setaddInputValue}
-        handleAddParticipant={addParticipant}
-      ></ParticipantForm>
+      <ParticipantForm/>
 
       <div className={styles.inputContainer}>
         {renderParticipants}

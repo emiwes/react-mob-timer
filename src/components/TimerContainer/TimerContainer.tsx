@@ -3,29 +3,30 @@ import styles from "./TimerContainer.module.scss";
 
 import Timer from "../Timer/Timer";
 import PlayButton from "../PlayButton/PlayButton";
+import useParticipant from "../../hooks/useParticipant";
 // import timeoverSound from "../../assets/audio/timeover.mp3";
 // import fightSound from "../../assets/audio/fight.mp3";
 
 const timeoverSound = require("../../assets/audio/timeover.mp3");
-const fightSound = require( "../../assets/audio/fight.mp3");
+const fightSound = require("../../assets/audio/fight.mp3");
 
 
 
-interface ITimerContainer{
-  activeParticipant: any,
+interface ITimerContainer {
   startTime: number,
   currentTime: number,
-  handleNextActiveParticipant: () => void,
   handleSetCurrentTime: (time: number) => void
 }
 
 const TimerContainer: React.FC<ITimerContainer> = ({
-  activeParticipant,
   startTime,
   currentTime,
-  handleNextActiveParticipant,
   handleSetCurrentTime
 }) => {
+
+  const { participants, updateParticipantAction } = useParticipant();
+  const activeParticipant = participants.find(p => p.isActive);
+
   const TIME_UNITS = {
     MINUTES: "MINUTES",
     SECONDS: "SECONDS"
@@ -46,7 +47,7 @@ const TimerContainer: React.FC<ITimerContainer> = ({
       playStopSound();
       window.clearInterval(interval);
       resetTimer();
-      handleNextActiveParticipant();
+      setNextActiveParticipant();
     }
 
     return () => window.clearInterval(interval);
@@ -54,8 +55,21 @@ const TimerContainer: React.FC<ITimerContainer> = ({
     isActive,
     currentTime,
     handleSetCurrentTime,
-    handleNextActiveParticipant
+    setNextActiveParticipant
   ]);
+
+  function setNextActiveParticipant() {
+    if (!activeParticipant) return;
+
+    const currentActiveIndex = participants.findIndex(p => p.isActive);
+    const current = { ...activeParticipant }
+    current.isActive = false;
+
+    const next = currentActiveIndex === participants.length - 1 ? { ...participants[0] } : { ...participants[currentActiveIndex + 1] }
+    next.isActive = true;
+    updateParticipantAction(current);
+    updateParticipantAction(next);
+  }
 
   function toggleTimer(): void {
     if (!isActive && currentTime === startTime) {

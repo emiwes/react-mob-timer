@@ -1,6 +1,7 @@
 export interface IParticipant {
     name: string,
+    uuid: number,
     isDragging: boolean,
-    uuid: number
+    isActive: boolean,
 };
 
