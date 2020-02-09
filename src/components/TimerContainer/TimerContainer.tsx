@@ -1,60 +1,48 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import styles from "./TimerContainer.module.scss";
 
 import Timer from "../Timer/Timer";
 import PlayButton from "../PlayButton/PlayButton";
 import useParticipant from "../../hooks/useParticipant";
-// import timeoverSound from "../../assets/audio/timeover.mp3";
-// import fightSound from "../../assets/audio/fight.mp3";
+import useTime from "../../hooks/useTime";
 
 const timeoverSound = require("../../assets/audio/timeover.mp3");
-const fightSound = require("../../assets/audio/fight.mp3");
 
+interface ITimerContainer { }
 
-
-interface ITimerContainer {
-  startTime: number,
-  currentTime: number,
-  handleSetCurrentTime: (time: number) => void
-}
-
-const TimerContainer: React.FC<ITimerContainer> = ({
-  startTime,
-  currentTime,
-  handleSetCurrentTime
-}) => {
+const TimerContainer: React.FC<ITimerContainer> = () => {
 
   const { participants, updateParticipantAction } = useParticipant();
   const activeParticipant = participants.find(p => p.isActive);
+  const { time, resetTime, decrementTime } = useTime();
 
   const TIME_UNITS = {
     MINUTES: "MINUTES",
     SECONDS: "SECONDS"
   };
 
-  const [isActive, setIsActive] = useState(false);
-
   useEffect(() => {
     let interval: any;
 
-    if (isActive && currentTime >= 0) {
-      writeToTitle(currentTime);
+    if (time.isActive && time.currentTime >= 0) {
+      writeToTitle(time.currentTime);
 
       interval = window.setInterval(() => {
-        handleSetCurrentTime(currentTime - 1);
+        decrementTime();
       }, 1000);
-    } else if (isActive && currentTime < 0) {
+    } else if (time.isActive && time.currentTime < 0) {
       playStopSound();
       window.clearInterval(interval);
-      resetTimer();
+      resetTime();
       setNextActiveParticipant();
     }
 
     return () => window.clearInterval(interval);
   }, [
-    isActive,
-    currentTime,
-    handleSetCurrentTime,
+    time.isActive,
+    time.currentTime,
+    decrementTime,
+    resetTime,
     setNextActiveParticipant
   ]);
 
@@ -69,19 +57,6 @@ const TimerContainer: React.FC<ITimerContainer> = ({
     next.isActive = true;
     updateParticipantAction(current);
     updateParticipantAction(next);
-  }
-
-  function toggleTimer(): void {
-    if (!isActive && currentTime === startTime) {
-      var audio = new Audio(fightSound);
-      audio.play();
-    }
-    setIsActive(!isActive);
-  }
-
-  function resetTimer(): void {
-    handleSetCurrentTime(startTime);
-    setIsActive(false);
   }
 
   function writeToTitle(timeInSeconds: number): void {
@@ -104,22 +79,18 @@ const TimerContainer: React.FC<ITimerContainer> = ({
       </h3>
 
       <div className={styles.timer}>
-        <Timer time={currentTime} label={TIME_UNITS.MINUTES} />
-        <Timer time={currentTime} label={TIME_UNITS.SECONDS} />
+        <Timer time={time.currentTime} label={TIME_UNITS.MINUTES} />
+        <Timer time={time.currentTime} label={TIME_UNITS.SECONDS} />
       </div>
 
       <div className={styles.buttonContainer}>
-        <PlayButton
-          activeParticipant={activeParticipant}
-          isActive={isActive}
-          onClick={toggleTimer}
-        ></PlayButton>
+        <PlayButton activeParticipant={activeParticipant} />
         {
           <p
-            onClick={resetTimer}
+            onClick={resetTime}
             className={[
               styles.stop,
-              isActive || currentTime < startTime ? styles["stop--active"] : ""
+              time.isActive || time.currentTime < time.startTime ? styles["stop--active"] : ""
             ].join(" ")}
           >
             Reset

@@ -30,6 +30,3 @@ const useParticipant = () => {
 }
 
 export default useParticipant;
-
-
-

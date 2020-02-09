@@ -1,24 +1,34 @@
 import React from "react";
 import styles from "./PlayButton.module.scss";
 import { IParticipant } from "../../models/models";
+import useTime from "../../hooks/useTime";
+
+const fightSound = require("../../assets/audio/fight.mp3");
 
 interface IPlayButtonProps {
   activeParticipant?: IParticipant,
-  onClick: React.MouseEventHandler<HTMLButtonElement>,
-  isActive: boolean
 }
 
-const PlayButton: React.FC<IPlayButtonProps> = ({activeParticipant, onClick, isActive}) => {
+const PlayButton: React.FC<IPlayButtonProps> = ({ activeParticipant }) => {
+
+  const { time, setIsActive } = useTime();
+
+  function toggleTimer(): void {
+    if (!time.isActive && time.currentTime === time.startTime) {
+      var audio = new Audio(fightSound);
+      audio.play();
+    }
+
+    setIsActive(!time.isActive);
+  }
 
   const buttonClasses = [
     styles.playPauseButton,
-    isActive ? styles["playPauseButton--active"] : "",
+    time.isActive ? styles["playPauseButton--active"] : "",
     activeParticipant ? styles["playPauseButton--enabled"] : ""
   ].join(" ");
   return (
-    <React.Fragment>
-       <button onClick={onClick} className={buttonClasses}></button>
-    </React.Fragment>
+    <button onClick={toggleTimer} className={buttonClasses} disabled={!activeParticipant}></button>
   );
 };
 

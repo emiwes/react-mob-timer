@@ -5,17 +5,9 @@ import ParticipantForm from "../ParticipantForm/ParticipantForm";
 import { IParticipant } from "../../models/models";
 import useParticipant from "../../hooks/useParticipant";
 
-interface IParticipantContainer{
-  startTime: number,
-  handleSetStartTime: (time: number) => void,
-  handleSetCurrentTime: (time: number) => void
-}
+interface IParticipantContainer{}
 
-const ParticipantContainer: React.FC<IParticipantContainer> = ({
-  startTime,
-  handleSetStartTime,
-  handleSetCurrentTime
-}) => {
+const ParticipantContainer: React.FC<IParticipantContainer> = () => {
 
   const { participants, removeParticipantAction, resetParticipantAction, updateParticipantAction } = useParticipant();
 
@@ -89,12 +81,7 @@ const ParticipantContainer: React.FC<IParticipantContainer> = ({
 
   return (
     <section className={styles.container}>
-      <TimerInput
-        startTime={startTime}
-        handleSetStartTime={handleSetStartTime}
-        handleSetCurrentTime={handleSetCurrentTime}
-      ></TimerInput>
-
+      <TimerInput/>
       <ParticipantForm/>
 
       <div className={styles.inputContainer}>

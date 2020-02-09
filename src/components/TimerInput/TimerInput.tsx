@@ -1,15 +1,18 @@
 import React from "react";
 import styles from "./TimerInput.module.scss";
+import useTime from "../../hooks/useTime";
 
-interface ITimerInput{
-  startTime: number,
-  handleSetStartTime: (time: number) => void,
-  handleSetCurrentTime: (time: number) => void;
-}
+interface ITimerInput{}
 
-const TimerInput: React.FC<ITimerInput> = ({ startTime, handleSetStartTime, handleSetCurrentTime }) => {
+const TimerInput: React.FC<ITimerInput> = () => {
+
+  const { time, setStartTime } = useTime();
+
   function updateTimer(event: React.ChangeEvent<HTMLInputElement>): void {
-    let inputTime = parseInt(event.target.value);
+    let inputTime = parseFloat(event.target.value);
+
+    if(!inputTime) return;
+
     if (inputTime > 99){
       inputTime = 99;
       event.target.value = inputTime.toString(); 
@@ -18,9 +21,7 @@ const TimerInput: React.FC<ITimerInput> = ({ startTime, handleSetStartTime, hand
       inputTime = 0;
       event.target.value = inputTime.toString();
     } 
-
-    handleSetStartTime(inputTime * 60);
-    handleSetCurrentTime(inputTime * 60);
+    setStartTime(inputTime * 60);
   }
   return (
     <input
@@ -32,7 +33,7 @@ const TimerInput: React.FC<ITimerInput> = ({ startTime, handleSetStartTime, hand
       max="99"
       autoFocus={true}
       onChange={updateTimer}
-      defaultValue={startTime / 60}
+      defaultValue={time.startTime / 60}
     ></input>
   );
 };
