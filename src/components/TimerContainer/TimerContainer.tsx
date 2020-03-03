@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useCallback } from "react";
 import styles from "./TimerContainer.module.scss";
 
 import Timer from "../Timer/Timer";
@@ -20,6 +20,19 @@ const TimerContainer: React.FC<ITimerContainer> = () => {
     MINUTES: "MINUTES",
     SECONDS: "SECONDS"
   };
+
+  const setNextActiveParticipant = useCallback( () => {
+    if (!activeParticipant) return;
+
+    const currentActiveIndex = participants.findIndex(p => p.isActive);
+    const current = { ...activeParticipant }
+    current.isActive = false;
+
+    const next = currentActiveIndex === participants.length - 1 ? { ...participants[0] } : { ...participants[currentActiveIndex + 1] }
+    next.isActive = true;
+    updateParticipantAction(current);
+    updateParticipantAction(next);
+  }, [activeParticipant, participants, updateParticipantAction]);
 
   useEffect(() => {
     let interval: any;
@@ -45,19 +58,6 @@ const TimerContainer: React.FC<ITimerContainer> = () => {
     resetTime,
     setNextActiveParticipant
   ]);
-
-  function setNextActiveParticipant() {
-    if (!activeParticipant) return;
-
-    const currentActiveIndex = participants.findIndex(p => p.isActive);
-    const current = { ...activeParticipant }
-    current.isActive = false;
-
-    const next = currentActiveIndex === participants.length - 1 ? { ...participants[0] } : { ...participants[currentActiveIndex + 1] }
-    next.isActive = true;
-    updateParticipantAction(current);
-    updateParticipantAction(next);
-  }
 
   function writeToTitle(timeInSeconds: number): void {
     const totalMinutes = Math.floor(timeInSeconds / 60);
